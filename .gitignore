@@ -1,0 +1,34 @@
+# Compilados Java
+*.class
+out/
+bin/
+target/
+build/
+
+# Arquivos de IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Maven / Gradle
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+# Logs
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Dados em runtime (CSV gerados/atualizados pelo sistema)
+data/*.csv
+!data/clientes_exemplo.csv
+!data/veiculos_exemplo.csv
+!data/registros_exemplo.csv
+!data/bloqueados_exemplo.csv
