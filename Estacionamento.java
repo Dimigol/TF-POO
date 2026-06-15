@@ -14,6 +14,4 @@ public class Estacionamento {
     boolean autorizarEntrada(String placa, LocalDateTime momento);
     double processarSaida(String placa, LocalDateTime momento);
     // métodos de relatório...
-} {
-    
 }

@@ -1,4 +1,4 @@
-import java.util.Set;
+import java.util.*;
 
 abstract class Cliente {
     String identificador; // CPF ou CNPJ
