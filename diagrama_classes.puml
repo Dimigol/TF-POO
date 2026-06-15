@@ -1,0 +1,147 @@
+@startuml DiagramaClassesEstacionamento
+
+skinparam classAttributeIconSize 0
+hide circle
+
+abstract class Cliente {
+  - id : String
+  - nome : String
+  - placas : Set<String>
+  + {abstract} calcularCusto(r: RegistroEstacionamento) : double
+  + {abstract} podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
+  + adicionarPlaca(placa: String) : boolean
+  + removerPlaca(placa: String) : boolean
+}
+
+class ClienteAvulso {
+  - placa : String
+  - usouUltimosTresDias : boolean
+  + calcularCusto(r: RegistroEstacionamento) : double
+  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
+}
+
+class Professor {
+  - cpf : String
+  + calcularCusto(r: RegistroEstacionamento) : double
+  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
+  + temVeiculoEstacionado(placasEstacionadas: Set<String>) : boolean
+}
+
+class Estudante {
+  - cpf : String
+  - saldo : double
+  + calcularCusto(r: RegistroEstacionamento) : double
+  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
+  + debitar(valor: double) : void
+  + estaBloqueado() : boolean
+}
+
+class Empresa {
+  - cnpj : String
+  - debitoAcumulado : double
+  - inadimplente : boolean
+  + calcularCusto(r: RegistroEstacionamento) : double
+  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
+  + adicionarDebito(valor: double) : void
+  + emitirBoleto() : double
+  + registrarPagamento(valor: double) : void
+}
+
+class Veiculo {
+  - placa : String
+  - proprietario : Cliente
+  + getPlaca() : String
+  + getProprietario() : Cliente
+}
+
+class RegistroEstacionamento {
+  - placa : String
+  - tipoCliente : String
+  - entrada : LocalDateTime
+  - saida : LocalDateTime
+  - custo : double
+  - idDesconto : String
+  - valorDesconto : double
+  - valorDevido : double
+  - valorPago : double
+  + estaAtivo() : boolean
+  + calcularDuracao() : Duration
+}
+
+interface Desconto {
+  + getId() : String
+  + aplicar(valorOriginal: double) : double
+}
+
+class DescontoClienteFrequente {
+  + getId() : String
+  + aplicar(valorOriginal: double) : double
+}
+
+class TabelaTarifas {
+  - valorHora : double
+  - valorDiaria : double
+  - valorIngresso : double
+  - multaAtraso : double
+  + carregarDeArquivo(caminho: String) : void
+}
+
+class Estacionamento {
+  - capacidadeTotal : int
+  - clientesCadastrados : Map<String, Cliente>
+  - veiculosCadastrados : Map<String, Veiculo>
+  - placasBloqueadas : Set<String>
+  - registrosAtivos : Map<String, RegistroEstacionamento>
+  - historico : List<RegistroEstacionamento>
+  - tarifas : TabelaTarifas
+  - descontos : List<Desconto>
+  + autorizarEntrada(placa: String, momento: LocalDateTime) : boolean
+  + processarSaida(placa: String, momento: LocalDateTime) : double
+  + cadastrarCliente(c: Cliente) : void
+  + cadastrarPlaca(idCliente: String, placa: String) : boolean
+  + removerPlaca(idCliente: String, placa: String) : boolean
+  + relatorioArrecadacao(inicio: LocalDate, fim: LocalDate) : double
+  + relatorioSituacaoCliente(idCliente: String) : String
+  + relatorioRegistrosCliente(idCliente: String, inicio: LocalDate, fim: LocalDate) : List<RegistroEstacionamento>
+  + relatorioBloqueados() : Set<String>
+  + relatorioTop10Frequentes() : List<Cliente>
+}
+
+class CSVManager {
+  + carregarClientes(caminho: String) : Map<String, Cliente>
+  + carregarVeiculos(caminho: String) : Map<String, Veiculo>
+  + carregarRegistros(caminho: String) : List<RegistroEstacionamento>
+  + carregarBloqueados(caminho: String) : Set<String>
+  + salvarClientes(caminho: String, clientes: Map<String, Cliente>) : void
+  + salvarRegistros(caminho: String, registros: List<RegistroEstacionamento>) : void
+  + salvarBloqueados(caminho: String, bloqueados: Set<String>) : void
+}
+
+class InterfaceUsuario {
+  - estacionamento : Estacionamento
+  + telaCadastroCliente() : void
+  + telaEntradaSaida() : void
+  + telaRelatorios() : void
+}
+
+' Heranças
+Cliente <|-- ClienteAvulso
+Cliente <|-- Professor
+Cliente <|-- Estudante
+Cliente <|-- Empresa
+
+' Implementações
+Desconto <|.. DescontoClienteFrequente
+
+' Associações
+Cliente "1" o-- "0..*" Veiculo : possui >
+Estacionamento "1" *-- "0..*" RegistroEstacionamento : historico
+Estacionamento "1" *-- "0..*" Veiculo : veiculosCadastrados
+Estacionamento "1" *-- "0..*" Cliente : clientesCadastrados
+Estacionamento "1" -- "1" TabelaTarifas : usa >
+Estacionamento "1" -- "0..*" Desconto : aplica >
+Estacionamento "1" -- "1" CSVManager : usa >
+InterfaceUsuario "1" --> "1" Estacionamento : usa >
+RegistroEstacionamento "0..*" --> "1" Veiculo : referencia >
+
+@enduml
