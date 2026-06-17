@@ -11,7 +11,6 @@ pela empresa EstACME. Atende clientes avulsos e clientes pré-cadastrados
 cobrança e autorização de entrada.
 
 ## Estrutura do projeto
-
 ```
 src/
   model/
