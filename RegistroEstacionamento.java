@@ -1,3 +1,5 @@
+import java.time.LocalDateTime;
+
 class RegistroEstacionamento {
     String placa;
     String tipoCliente;
