@@ -56,7 +56,7 @@ class Veiculo {
 
 class RegistroEstacionamento {
   - placa : String
-  - tipoCliente : String
+  ' TRANSFORMAR EM ENUM                                                 - tipoCliente : String
   - entrada : LocalDateTime
   - saida : LocalDateTime
   - custo : double
@@ -125,7 +125,6 @@ class InterfaceUsuario {
 }
 
 ' Heranças
-Cliente <|-- ClienteAvulso
 Cliente <|-- Professor
 Cliente <|-- Estudante
 Cliente <|-- Empresa
@@ -135,6 +134,7 @@ Desconto <|.. DescontoClienteFrequente
 
 ' Associações
 Cliente "1" o-- "0..*" Veiculo : possui >
+ClienteAvulso "1" o-- "0..*" RegistroEstacionamento : possui >
 Estacionamento "1" *-- "0..*" RegistroEstacionamento : historico
 Estacionamento "1" *-- "0..*" Veiculo : veiculosCadastrados
 Estacionamento "1" *-- "0..*" Cliente : clientesCadastrados
