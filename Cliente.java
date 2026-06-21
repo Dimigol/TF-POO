@@ -25,22 +25,20 @@ abstract class Cliente {
     public Set<String> getPlacas() {
         return placas;
     }
-
+gi
      
     abstract double calcularCusto(RegistroEstacionamento r);
     abstract boolean podeEntrar(String placa, Set<String> placasEstacionadas);
 
     public boolean adicionarPlaca(String placa){
-        if(placa == null || placa.isBlank())
+        if(placa == null || placa.isBlank()){
+            return false;
+        }
+        return true;
     }
 
-    /*
-    - id : String
-  - nome : String
-  - placas : Set<String>
-  + {abstract} calcularCusto(r: RegistroEstacionamento) : double
-  + {abstract} podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-  + adicionarPlaca(placa: String) : boolean
-  + removerPlaca(placa: String) : boolean
-    */
+    public boolean removePlaca(String placa){
+        return placas.remove(placa);
+    }
+    
 }
