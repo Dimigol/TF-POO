@@ -25,8 +25,7 @@ abstract class Cliente {
     public Set<String> getPlacas() {
         return placas;
     }
-gi
-     
+    
     abstract double calcularCusto(RegistroEstacionamento r);
     abstract boolean podeEntrar(String placa, Set<String> placasEstacionadas);
 

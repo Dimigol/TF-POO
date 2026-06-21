@@ -13,37 +13,34 @@ class Estudante extends Cliente {
         return saldo;
     }
 
+    // metodos abstratos da classe Cliente (genericos)
     @Override
     double calcularCusto(RegistroEstacionamento r) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     boolean podeEntrar(String placa, Set<String> placasEstacionadas) {
-        // TODO Auto-generated method stub
-        return false;
+        if (estaBloqueado()) {
+            return false;
+        }
+
+        if (!placas.contains(placa)) {
+            return false;
+        }
+
+        if (placasEstacionadas.contains(placa)) {
+            return false;
+        }
+
+        return true;
     }
-    // valor fixo por ingresso/dia, novo ingresso se sair após meia-noite
-    // bloqueado se saldo < 0
-}
 
+    public void debitar(double valor){
+        saldo -= valor;
+    }
 
-/*abstract class Cliente {
-  - id : String
-  - nome : String
-  - placas : Set<String>
-  + {abstract} calcularCusto(r: RegistroEstacionamento) : double
-  + {abstract} podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-  + adicionarPlaca(placa: String) : boolean
-  + removerPlaca(placa: String) : boolean
+    public boolean estaBloqueado(){
+        return saldo < 0;
+    }
 }
-  
-class Estudante {
-  - cpf : String
-  - saldo : double
-  + calcularCusto(r: RegistroEstacionamento) : double
-  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-  + debitar(valor: double) : void
-  + estaBloqueado() : boolean
-}*/
