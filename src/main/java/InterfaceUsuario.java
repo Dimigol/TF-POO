@@ -121,6 +121,8 @@ public class InterfaceUsuario extends VerticalLayout {
 
         TextField empresaId = new TextField("CNPJ da empresa");
         NumberField valorPagamento = new NumberField("Valor do pagamento");
+        DateTimePicker momentoPagamento = new DateTimePicker("Data do pagamento");
+        momentoPagamento.setValue(LocalDateTime.now());
         Button emitirBoleto = new Button("Emitir boleto", event -> executar(() -> {
             double valor = estacionamento.emitirBoletoEmpresa(empresaId.getValue());
             Notification.show(String.format("Boleto emitido: R$ %.2f", valor));
@@ -135,7 +137,7 @@ public class InterfaceUsuario extends VerticalLayout {
                 throw new IllegalArgumentException("Informe o valor do pagamento.");
             }
             double restante = estacionamento.registrarPagamentoEmpresa(
-                    empresaId.getValue(), valorPagamento.getValue());
+                    empresaId.getValue(), valorPagamento.getValue(), momentoPagamento.getValue());
             grid.getDataProvider().refreshAll();
             Notification.show(String.format("Pagamento registrado. Debito restante: R$ %.2f", restante));
         }));
@@ -164,7 +166,7 @@ public class InterfaceUsuario extends VerticalLayout {
                 grid,
                 linhaResponsiva(clientePlacaId, placaCliente, adicionarPlaca, removerPlaca),
                 linhaResponsiva(estudanteId, valorCredito, adicionarCredito),
-                linhaResponsiva(empresaId, valorPagamento,
+                linhaResponsiva(empresaId, valorPagamento, momentoPagamento,
                         emitirBoleto, marcarVencido, registrarPagamento));
     }
 
@@ -201,14 +203,19 @@ public class InterfaceUsuario extends VerticalLayout {
                 "Registros avulsos", "Impedidos", "Top 10 do ano");
         TextField referencia = new TextField("CPF, CNPJ ou placa");
         referencia.setHelperText("Para listar todos os avulsos, deixe a placa em branco.");
+        int anoAtual = LocalDateTime.now().getYear();
+        DateTimePicker inicioPeriodo = new DateTimePicker("Inicio do periodo");
+        inicioPeriodo.setValue(LocalDateTime.of(anoAtual, 1, 1, 0, 0));
+        DateTimePicker fimPeriodo = new DateTimePicker("Fim do periodo");
+        fimPeriodo.setValue(LocalDateTime.of(anoAtual, 12, 31, 23, 59, 59));
         NumberField ano = new NumberField("Ano");
-        ano.setValue((double) LocalDateTime.now().getYear());
+        ano.setValue((double) anoAtual);
         CheckboxGroup<TipoCliente> categorias = new CheckboxGroup<>("Categorias");
         categorias.setItems(TipoCliente.values());
         Pre resultado = new Pre();
         Button gerar = new Button("Gerar", event -> executar(() -> {
-            LocalDateTime inicio = LocalDateTime.of(ano.getValue().intValue(), 1, 1, 0, 0);
-            LocalDateTime fim = inicio.plusYears(1).minusNanos(1);
+            LocalDateTime inicio = inicioPeriodo.getValue();
+            LocalDateTime fim = fimPeriodo.getValue();
             String valor;
             switch (relatorio.getValue()) {
                 case "Arrecadacao":
@@ -237,7 +244,8 @@ public class InterfaceUsuario extends VerticalLayout {
             }
             resultado.setText(valor);
         }));
-        conteudo.add(linhaResponsiva(relatorio, referencia, ano, gerar), categorias, resultado);
+        conteudo.add(linhaResponsiva(relatorio, referencia, inicioPeriodo, fimPeriodo, ano, gerar),
+                categorias, resultado);
     }
 
     private HorizontalLayout linhaResponsiva(Component... componentes) {
