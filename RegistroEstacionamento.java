@@ -1,18 +1,101 @@
 import java.time.LocalDateTime;
+import java.time.Duration;
 
 class RegistroEstacionamento {
-    String placa;
-    String tipoCliente;
-    LocalDateTime entrada;
-    LocalDateTime saida;
-    double custo;
-    String idDesconto;
-    double valorDesconto;
-    double valorDevido;
-    double valorPago;
-    public RegistroEstacionamento(Cliente cliente, String placa2, LocalDateTime momento) {
-        //TODO Auto-generated constructor stub
+    private String placa;
+    private TipoCliente tipoCliente;
+    private LocalDateTime entrada;
+    private LocalDateTime saida;
+    private double custo;
+    private String idDesconto;
+    private double valorDesconto;
+    private double valorPago;
+
+    public RegistroEstacionamento(String placa, TipoCliente tipoCliente, LocalDateTime entrada, String idDesconto) {
+        //Cliente cliente, String placa2, LocalDateTime momento
+        this.placa = placa;
+        this.tipoCliente = tipoCliente;
+        this.entrada = entrada;
+        saida = null;
+        custo = 0.0;
+        this.idDesconto = idDesconto;
+        valorDesconto = 0.0;
+        valorPago = 0.0;
     }
+
+    public boolean estaAtivo(){
+        return (saida == null);
+    }
+
+    public Duration calculaDuracao(){
+        if(saida == null) return Duration.ZERO;
+        return Duration.between(entrada, saida);
+    }
+
+    public void atualizaSaida(LocalDateTime saida){
+        this.saida = saida;
+    }
+
+    
+    
+
+
+    public String getPlaca() {
+        return placa;
+    }
+
+
+
+
+    public TipoCliente getTipoCliente() {
+        return tipoCliente;
+    }
+
+
+
+
+    public LocalDateTime getEntrada() {
+        return entrada;
+    }
+
+
+
+
+    public LocalDateTime getSaida() {
+        return saida;
+    }
+
+
+
+
+    public double getCusto() {
+        return custo;
+    }
+
+
+
+
+    public String getIdDesconto() {
+        return idDesconto;
+    }
+
+
+
+
+    public double getValorDesconto() {
+        return valorDesconto;
+    }
+
+
+
+
+    public double getValorPago() {
+        return valorPago;
+    }
+
+
+
+
     public void setValorDevido(double valorDevido2) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'setValorDevido'");

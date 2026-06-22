@@ -28,7 +28,7 @@ public class Estacionamento {
             return false;
         }
 
-        if(placasBloqueadas.contains(placa)){
+        if(Bloqueadplacasas.contains(placa)){
             System.out.println(" Entrada negada: Placa bloqueada");
             return false;
         }

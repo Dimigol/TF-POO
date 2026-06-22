@@ -56,13 +56,12 @@ class Veiculo {
 
 class RegistroEstacionamento {
   - placa : String
-  ' TRANSFORMAR EM ENUM                                                 - tipoCliente : String
+  - tipoCliente : TipoCliente
   - entrada : LocalDateTime
   - saida : LocalDateTime
   - custo : double
   - idDesconto : String
   - valorDesconto : double
-  - valorDevido : double
   - valorPago : double
   + estaAtivo() : boolean
   + calcularDuracao() : Duration
