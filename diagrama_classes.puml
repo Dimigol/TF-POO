@@ -67,6 +67,12 @@ class RegistroEstacionamento {
   + getQuantidadeViradasDeDia() : long
 }
 
+class PagamentoEmpresa {
+  - identificadorEmpresa : String
+  - momento : LocalDateTime
+  - valor : double
+}
+
 interface Desconto {
   + aplicar(valorOriginal : double) : double
   + getId() : String
@@ -87,10 +93,16 @@ class Estacionamento {
   - placasBloqueadas : Set<String>
   - registrosAtivos : Map<String, RegistroEstacionamento>
   - historico : List<RegistroEstacionamento>
+  - pagamentosEmpresariais : List<PagamentoEmpresa>
   + cadastrarCliente(cliente : Cliente)
   + cadastrarPlaca(id, placa) : boolean
   + removerPlaca(id, placa) : boolean
+  + adicionarCreditoEstudante(id, valor) : double
+  + emitirBoletoEmpresa(id) : double
+  + marcarBoletoEmpresaComoVencido(id)
+  + registrarPagamentoEmpresa(id, valor, momento) : double
   + autorizarEntrada(placa, momento) : boolean
+  + calcularValorSaida(placa, momento) : double
   + processarSaida(placa, momento, pagamento) : double
   + relatorioArrecadacao(inicio, fim, categorias) : double
   + relatorioSituacaoCliente(id) : String
@@ -108,17 +120,22 @@ class CSVManager {
 }
 
 class InterfaceUsuario <<Vaadin Route>>
-class Aplicacao <<Spring Boot>>
+class Main <<Spring Boot>>
+class Aplicacao <<Compatibilidade>>
 
 Cliente "1" o-- "0..*" Veiculo
 Estacionamento *-- Cliente
 Estacionamento *-- Veiculo
 Estacionamento *-- RegistroEstacionamento
+Estacionamento *-- PagamentoEmpresa
 Estacionamento --> TabelaTarifas
 Estacionamento --> Desconto
 RegistroEstacionamento --> TipoCliente
 CSVManager --> Estacionamento
 InterfaceUsuario --> Estacionamento
-Aplicacao --> CSVManager
-Aplicacao --> Estacionamento
+InterfaceUsuario --> CSVManager
+Main --> CSVManager
+Main --> Estacionamento
+Main --> InterfaceUsuario
+Aplicacao --> Main
 @enduml

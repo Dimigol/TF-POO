@@ -18,11 +18,13 @@ A interface fica disponivel em `http://localhost:8080` e oferece:
 
 - cadastro de professores, estudantes, empresas e suas placas;
 - registro de entrada e saida, incluindo pagamento avulso;
+- recarga de estudantes e controle de boletos e pagamentos empresariais;
+- relatorios por periodo personalizado e categoria;
 - os seis relatorios gerenciais exigidos no enunciado.
 
 Os dados ficam no diretorio `dados/`, nos arquivos `clientes.csv`, `veiculos.csv`,
-`registros.csv` e `bloqueados.csv`. Eles sao carregados ao iniciar e salvos
-automaticamente ao encerrar a aplicacao.
+`registros.csv`, `pagamentos_empresas.csv` e `bloqueados.csv`. Eles sao carregados
+ao iniciar e salvos manualmente ou automaticamente ao encerrar a aplicacao.
 
 ## Tarifas padrao
 
@@ -42,8 +44,8 @@ professor com dois veiculos, saldo negativo de estudante, inadimplencia empresar
 e persistencia CSV.
 
 ```bash
-mvn compile
-java -ea -cp target/classes br.edu.pucrs.estacionamento.EstacionamentoTest
+mvn test-compile
+java -ea -cp target/classes:target/test-classes EstacionamentoTest
 ```
 
 ## Arquivos principais
@@ -52,5 +54,6 @@ java -ea -cp target/classes br.edu.pucrs.estacionamento.EstacionamentoTest
 - `Cliente.java` e subclasses: regras polimorficas por categoria.
 - `RegistroEstacionamento.java`: dados completos de cada permanencia.
 - `CSVManager.java`: carga, salvamento manual e salvamento automatico.
+- `PagamentoEmpresa.java`: historico datado dos pagamentos empresariais.
 - `InterfaceUsuario.java`: interface web Vaadin.
 - `diagrama_classes.puml`: diagrama de classes atualizado.
