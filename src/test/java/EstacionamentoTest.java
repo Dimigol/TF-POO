@@ -2,6 +2,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 
 public class EstacionamentoTest {
@@ -71,14 +72,29 @@ public class EstacionamentoTest {
         igual(130, e.emitirBoletoEmpresa("333"), "emissao de boleto");
         e.marcarBoletoEmpresaComoVencido("333");
         verificar(!e.autorizarEntrada("EMP2E34", BASE.plusDays(2)), "empresa inadimplente");
-        igual(100, e.registrarPagamentoEmpresa("333", 30), "pagamento parcial da empresa");
+        igual(100, e.registrarPagamentoEmpresa("333", 30, BASE.plusDays(3)),
+                "pagamento parcial da empresa");
         verificar(!e.autorizarEntrada("EMP2E34", BASE.plusDays(2)),
                 "empresa segue inadimplente com debito");
-        igual(0, e.registrarPagamentoEmpresa("333", 100), "quitacao da empresa");
-        verificar(e.autorizarEntrada("EMP2E34", BASE.plusDays(2)),
+        igual(0, e.registrarPagamentoEmpresa("333", 100, BASE.plusDays(4)),
+                "quitacao da empresa");
+        verificar(e.autorizarEntrada("EMP2E34", BASE.plusDays(5)),
                 "empresa liberada depois da quitacao");
-        igual(50, e.processarSaida("EMP2E34", BASE.plusDays(2).plusHours(1)),
+        igual(50, e.processarSaida("EMP2E34", BASE.plusDays(5).plusHours(1)),
                 "nova diaria empresarial");
+
+        igual(130, e.relatorioArrecadacao(BASE, BASE.plusDays(10),
+                EnumSet.of(TipoCliente.EMPRESA)), "arrecadacao empresarial");
+        igual(30, e.relatorioArrecadacao(BASE.plusDays(3),
+                BASE.plusDays(3).plusHours(1), EnumSet.of(TipoCliente.EMPRESA)),
+                "arrecadacao empresarial por periodo");
+        verificar(e.relatorioSituacaoCliente("333").contains("debito=50.0"),
+                "relatorio de situacao empresarial");
+        igual(2, e.relatorioRegistrosCliente("111", BASE.minusDays(1),
+                BASE.plusDays(1)).size(), "registros do professor");
+        verificar(e.relatorioImpedidos().contains("NEG1A23"), "relatorio de impedidos");
+        verificar(!e.relatorioTop10Frequentes(BASE.getYear()).isEmpty(),
+                "relatorio dos clientes frequentes");
 
         Path csv = Files.createTempDirectory("estacionamento-csv-");
         CSVManager manager = new CSVManager(csv);
@@ -88,6 +104,8 @@ public class EstacionamentoTest {
         igual(e.getClientesCadastrados().size(), recarregado.getClientesCadastrados().size(),
                 "clientes recarregados");
         verificar(recarregado.getPlacasBloqueadas().contains("NEG1A23"), "bloqueio recarregado");
+        igual(130, recarregado.relatorioArrecadacao(BASE, BASE.plusDays(10),
+                EnumSet.of(TipoCliente.EMPRESA)), "pagamentos empresariais recarregados");
 
         System.out.println("Todos os testes passaram.");
     }
