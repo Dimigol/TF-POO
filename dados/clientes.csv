@@ -1,0 +1,4 @@
+tipo,identificador,nome,saldo,debito,inadimplente
+"ESTUDANTE","07505640160","Dimitri","55.0","",""
+"PROFESSOR","12345678910","Teste","","",""
+"EMPRESA","76.688.770/0001-30","PUCRS","","0.0","false"
