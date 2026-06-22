@@ -20,6 +20,7 @@ public final class CSVManager {
         carregarClientes(estacionamento);
         carregarVeiculos(estacionamento);
         carregarRegistros(estacionamento);
+        carregarPagamentosEmpresariais(estacionamento);
         carregarBloqueados(estacionamento);
         return estacionamento;
     }
@@ -29,6 +30,7 @@ public final class CSVManager {
         salvarClientes(estacionamento);
         salvarVeiculos(estacionamento);
         salvarRegistros(estacionamento);
+        salvarPagamentosEmpresariais(estacionamento);
         salvarBloqueados(estacionamento);
     }
 
@@ -91,6 +93,13 @@ public final class CSVManager {
         }
     }
 
+    private void carregarPagamentosEmpresariais(Estacionamento estacionamento) throws IOException {
+        for (List<String> row : ler("pagamentos_empresas.csv")) {
+            estacionamento.restaurarPagamentoEmpresa(new PagamentoEmpresa(
+                    row.get(0), LocalDateTime.parse(row.get(1)), Double.parseDouble(row.get(2))));
+        }
+    }
+
     private void salvarClientes(Estacionamento estacionamento) throws IOException {
         List<String> linhas = new ArrayList<>();
         linhas.add("tipo,identificador,nome,saldo,debito,inadimplente");
@@ -141,6 +150,16 @@ public final class CSVManager {
             linhas.add(linha(placa));
         }
         escreverAtomico("bloqueados.csv", linhas);
+    }
+
+    private void salvarPagamentosEmpresariais(Estacionamento estacionamento) throws IOException {
+        List<String> linhas = new ArrayList<>();
+        linhas.add("identificador_empresa,momento,valor");
+        for (PagamentoEmpresa pagamento : estacionamento.pagamentosParaPersistencia()) {
+            linhas.add(linha(pagamento.getIdentificadorEmpresa(),
+                    pagamento.getMomento().toString(), Double.toString(pagamento.getValor())));
+        }
+        escreverAtomico("pagamentos_empresas.csv", linhas);
     }
 
     private List<List<String>> ler(String nome) throws IOException {

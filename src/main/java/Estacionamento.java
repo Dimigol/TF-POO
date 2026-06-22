@@ -19,6 +19,7 @@ public class Estacionamento {
     private final Set<String> placasBloqueadas = new HashSet<>();
     private final Map<String, RegistroEstacionamento> registrosAtivos = new HashMap<>();
     private final List<RegistroEstacionamento> historico = new ArrayList<>();
+    private final List<PagamentoEmpresa> pagamentosEmpresariais = new ArrayList<>();
     private final TabelaTarifas tarifas;
     private final Desconto descontoFrequente = new DescontoClienteFrequente();
 
@@ -96,8 +97,15 @@ public class Estacionamento {
     }
 
     public double registrarPagamentoEmpresa(String identificador, double valor) {
+        return registrarPagamentoEmpresa(identificador, valor, LocalDateTime.now());
+    }
+
+    public double registrarPagamentoEmpresa(
+            String identificador, double valor, LocalDateTime momento) {
         Empresa empresa = empresaObrigatoria(identificador);
+        PagamentoEmpresa pagamento = new PagamentoEmpresa(identificador, momento, valor);
         empresa.registrarPagamento(valor);
+        pagamentosEmpresariais.add(pagamento);
         return empresa.getDebitoAcumulado();
     }
 
@@ -237,6 +245,14 @@ public class Estacionamento {
                 total += registro.getValorPago();
             }
         }
+        if (filtro.contains(TipoCliente.EMPRESA)) {
+            for (PagamentoEmpresa pagamento : pagamentosEmpresariais) {
+                if (!pagamento.getMomento().isBefore(inicio)
+                        && !pagamento.getMomento().isAfter(fim)) {
+                    total += pagamento.getValor();
+                }
+            }
+        }
         return total;
     }
 
@@ -364,10 +380,15 @@ public class Estacionamento {
     Set<String> bloqueadosParaPersistencia() { return placasBloqueadas; }
     List<RegistroEstacionamento> historicoParaPersistencia() { return historico; }
     Map<String, RegistroEstacionamento> ativosParaPersistencia() { return registrosAtivos; }
+    List<PagamentoEmpresa> pagamentosParaPersistencia() { return pagamentosEmpresariais; }
     void restaurarBloqueio(String placa) { placasBloqueadas.add(placaObrigatoria(placa)); }
     void restaurarRegistro(RegistroEstacionamento registro) {
         if (registro.estaAtivo()) registrosAtivos.put(registro.getPlaca(), registro);
         else historico.add(registro);
+    }
+    void restaurarPagamentoEmpresa(PagamentoEmpresa pagamento) {
+        empresaObrigatoria(pagamento.getIdentificadorEmpresa());
+        pagamentosEmpresariais.add(pagamento);
     }
 
     public Map<String, Cliente> getClientesCadastrados() {
