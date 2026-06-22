@@ -32,3 +32,7 @@ data/*.csv
 !data/veiculos_exemplo.csv
 !data/registros_exemplo.csv
 !data/bloqueados_exemplo.csv
+
+# Arquivos gerados
+frontend/
+.github/modernize/
