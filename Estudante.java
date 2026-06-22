@@ -7,6 +7,10 @@ class Estudante extends Cliente {
     public Estudante(String id, String nome, Set<String> placas, double saldo){
         super(id, nome, placas);
         this.saldo = saldo;
+
+        if (placas.size() > 1){
+            throw new IllegalArgumentException("Estudante pode ter no máximo 1 placa.");
+        }
     }
 
     public double getSaldo(){
