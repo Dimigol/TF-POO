@@ -15,4 +15,10 @@ class Veiculo {
         return proprietario;
     }
     
+    String placa;
+    Cliente proprietario; // null se avulso
+    public Cliente getProprietario() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getProprietario'");
+    }
 }
