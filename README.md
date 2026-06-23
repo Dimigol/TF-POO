@@ -57,3 +57,11 @@ java -ea -cp target/classes:target/test-classes EstacionamentoTest
 - `PagamentoEmpresa.java`: historico datado dos pagamentos empresariais.
 - `InterfaceUsuario.java`: interface web Vaadin.
 - `diagrama_classes.puml`: diagrama de classes atualizado.
+
+
+## Participantes
+
+- Dimitri Jadovski
+- Frederico Correa
+- Rodrigo Bachovas
+- Gustavao da Rosa
