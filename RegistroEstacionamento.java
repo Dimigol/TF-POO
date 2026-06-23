@@ -36,6 +36,14 @@ class RegistroEstacionamento {
         this.saida = saida;
     }
 
+    public void calculaPreco(){
+        if(tipoCliente == TipoCliente.PROFESSOR){
+            custo = 0.0;
+        }else if(tipoCliente == TipoCliente.ESTUDANTE){
+            custo = 67.00;
+        }
+    }
+
     
     
 

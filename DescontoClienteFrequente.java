@@ -10,8 +10,7 @@ class DescontoClienteFrequente implements Desconto {
             .anyMatch(r->r.getPlaca().equals(placa) && r.getSaida().isAfter(TresDiasAtras));
         if (!tem) return 0.0;
         else{
-            // calcula desconto
-            return 67.0;
+            return valorOriginal * 0.1;
         }
     }
 

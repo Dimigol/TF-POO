@@ -72,7 +72,7 @@ public class Estacionamento {
 
         boolean pagamentoRealizado = cliente.processarPagamento(valorFinal);
 
-        if (!pagamentoRealizado && cliente instanceof ClienteAvulso) {
+        if (!pagamentoRealizado && cliente.getTipoCliente() == TipoCliente.AVULSO) {
             // Regra 3.1: Avulso que recusa pagar tem a placa bloqueada, mas sai.
             placasBloqueadas.add(placa);
             System.out.println("Alerta: Pagamento não realizado. Placa " + placa + " bloqueada.");
