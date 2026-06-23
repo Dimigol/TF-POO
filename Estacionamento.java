@@ -28,7 +28,7 @@ public class Estacionamento {
             return false;
         }
 
-        if(Bloqueadplacasas.contains(placa)){
+        if(placasBloqueadas.contains(placa)){
             System.out.println(" Entrada negada: Placa bloqueada");
             return false;
         }
@@ -37,7 +37,9 @@ public class Estacionamento {
             System.out.println("Veículo já se encontra no estacionamento");
             return false;
         }
+
         Cliente cliente;
+        
         if (veiculosCadastrados.containsKey(placa)) {
             cliente = veiculosCadastrados.get(placa).getProprietario();
         } else {
@@ -72,7 +74,7 @@ public class Estacionamento {
 
         boolean pagamentoRealizado = cliente.processarPagamento(valorFinal);
 
-        if (!pagamentoRealizado && cliente.getTipoCliente() == TipoCliente.AVULSO) {
+        if (!pagamentoRealizado && cliente instanceof ClienteAvulso) {
             // Regra 3.1: Avulso que recusa pagar tem a placa bloqueada, mas sai.
             placasBloqueadas.add(placa);
             System.out.println("Alerta: Pagamento não realizado. Placa " + placa + " bloqueada.");

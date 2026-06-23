@@ -2,10 +2,12 @@
 class ClienteAvulso {
     private String placa;
     private boolean usouUltimosTresDias;
+    private TipoCliente tipoCliente;
 
     public ClienteAvulso(String placa){
       this.placa = placa;
       this.usouUltimosTresDias = false;
+      tipoCliente = TipoCliente.AVULSO;
     }
 
     
