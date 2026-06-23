@@ -15,7 +15,7 @@ public abstract class Cliente {
         if (nome == null || nome.isBlank()) {
             throw new IllegalArgumentException("Nome obrigatorio.");
         }
-        this.identificador = identificador.trim();
+        this.identificador = normalizarIdentificador(identificador);
         this.nome = nome.trim();
         this.placas = new HashSet<>();
         this.limitePlacas = limitePlacas;
@@ -65,5 +65,27 @@ public abstract class Cliente {
             return null;
         }
         return placa.replaceAll("[^A-Za-z0-9]", "").toUpperCase();
+    }
+
+    public static String normalizarIdentificador(String identificador) {
+        if (identificador == null || identificador.isBlank()) {
+            return null;
+        }
+        String apenasDigitos = identificador.replaceAll("\\D", "");
+        return apenasDigitos.isBlank() ? identificador.trim() : apenasDigitos;
+    }
+
+    public static String formatarIdentificador(String identificador) {
+        String normalizado = normalizarIdentificador(identificador);
+        if (normalizado == null) {
+            return "";
+        }
+        if (normalizado.matches("\\d{11}")) {
+            return normalizado.replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
+        }
+        if (normalizado.matches("\\d{14}")) {
+            return normalizado.replaceFirst("(\\d{2})(\\d{3})(\\d{3})(\\d{4})(\\d{2})", "$1.$2.$3/$4-$5");
+        }
+        return normalizado;
     }
 }

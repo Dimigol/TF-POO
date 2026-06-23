@@ -277,11 +277,11 @@ public class Estacionamento {
 
     public List<RegistroEstacionamento> relatorioRegistrosCliente(
             String identificador, LocalDateTime inicio, LocalDateTime fim) {
-        clienteObrigatorio(identificador);
+        String normalizado = clienteObrigatorio(identificador).getIdentificador();
         validarPeriodo(inicio, fim);
         List<RegistroEstacionamento> resultado = new ArrayList<>();
         for (RegistroEstacionamento registro : historico) {
-            if (identificador.equals(registro.getIdentificadorProprietario())
+            if (normalizado.equals(registro.getIdentificadorProprietario())
                     && dentroDoPeriodo(registro, inicio, fim)) {
                 resultado.add(registro);
             }
@@ -347,7 +347,8 @@ public class Estacionamento {
     }
 
     private Cliente clienteObrigatorio(String identificador) {
-        Cliente cliente = clientesCadastrados.get(identificador);
+        String normalizado = Cliente.normalizarIdentificador(identificador);
+        Cliente cliente = clientesCadastrados.get(normalizado);
         if (cliente == null) {
             throw new IllegalArgumentException("Cliente nao cadastrado: " + identificador);
         }

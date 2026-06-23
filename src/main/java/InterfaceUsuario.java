@@ -91,7 +91,7 @@ public class InterfaceUsuario extends VerticalLayout {
             Notification.show("Cliente cadastrado.");
         }));
         Grid<Cliente> grid = new Grid<>(Cliente.class, false);
-        grid.addColumn(Cliente::getIdentificador).setHeader("CPF/CNPJ");
+        grid.addColumn(c -> Cliente.formatarIdentificador(c.getIdentificador())).setHeader("CPF/CNPJ");
         grid.addColumn(Cliente::getNome).setHeader("Nome");
         grid.addColumn(Cliente::getTipo).setHeader("Categoria");
         grid.addColumn(c -> String.join(", ", c.getPlacas())).setHeader("Placas");

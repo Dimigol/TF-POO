@@ -12,7 +12,7 @@ public final class PagamentoEmpresa {
         if (momento == null || valor <= 0) {
             throw new IllegalArgumentException("Dados do pagamento empresarial invalidos.");
         }
-        this.identificadorEmpresa = identificadorEmpresa.trim();
+        this.identificadorEmpresa = Cliente.normalizarIdentificador(identificadorEmpresa);
         this.momento = momento;
         this.valor = valor;
     }
