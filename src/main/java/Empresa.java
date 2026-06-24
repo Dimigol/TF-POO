@@ -6,7 +6,7 @@ public class Empresa extends Cliente {
 
     public Empresa(String cnpj, String nome, Set<String> placas,
                    double debitoAcumulado, boolean inadimplente) {
-        super(cnpj, nome, placas, Integer.MAX_VALUE);
+        super(validarCnpj(cnpj), nome, placas, Integer.MAX_VALUE);
         if (debitoAcumulado < 0) {
             throw new IllegalArgumentException("Debito nao pode ser negativo.");
         }

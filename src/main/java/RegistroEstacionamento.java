@@ -52,6 +52,14 @@ public class RegistroEstacionamento {
         this.valorPago = valorPago;
     }
 
+    public double registrarPagamentoAdicional(double valor) {
+        if (estaAtivo() || valor <= 0) {
+            throw new IllegalArgumentException("Pagamento adicional invalido.");
+        }
+        valorPago += valor;
+        return Math.max(0.0, valorDevido - valorPago);
+    }
+
     public void registrarSaida(LocalDateTime saida, double custo, String idDesconto,
                                double valorDesconto, double valorPago) {
         prepararSaida(saida);

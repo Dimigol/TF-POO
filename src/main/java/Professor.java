@@ -2,7 +2,7 @@ import java.util.Set;
 
 public class Professor extends Cliente {
     public Professor(String cpf, String nome, Set<String> placas) {
-        super(cpf, nome, placas, 2);
+        super(validarCpf(cpf), nome, placas, 2);
     }
 
     @Override

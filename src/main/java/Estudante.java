@@ -4,7 +4,7 @@ public class Estudante extends Cliente {
     private double saldo;
 
     public Estudante(String cpf, String nome, Set<String> placas, double saldo) {
-        super(cpf, nome, placas, 1);
+        super(validarCpf(cpf), nome, placas, 1);
         this.saldo = saldo;
     }
 

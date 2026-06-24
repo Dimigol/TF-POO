@@ -1,4 +1,3 @@
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -173,9 +172,6 @@ public class Estacionamento {
         if (registro == null) {
             throw new IllegalArgumentException("Veiculo nao encontrado no estacionamento.");
         }
-        if (registro.getTipoCliente() == TipoCliente.AVULSO && pagamentoAvulso == null) {
-            throw new IllegalArgumentException("Informe o pagamento do cliente avulso.");
-        }
         registro.prepararSaida(momento);
 
         Cliente cobravel = clienteDaModalidade(registro);
@@ -200,7 +196,7 @@ public class Estacionamento {
         } else if (registro.getTipoCliente() == TipoCliente.PROFESSOR) {
             pago = 0.0;
         } else {
-            pago = Math.max(0.0, pagamentoAvulso);
+            pago = pagamentoAvulso == null ? 0.0 : Math.max(0.0, pagamentoAvulso);
             if (pago < devido) {
                 placasBloqueadas.add(normalizada);
             }
@@ -210,6 +206,28 @@ public class Estacionamento {
         registrosAtivos.remove(normalizada);
         historico.add(registro);
         return devido;
+    }
+
+    public double calcularDebitoAvulso(String placa) {
+        String normalizada = placaObrigatoria(placa);
+        RegistroEstacionamento registro = ultimoRegistroAvulsoComDebito(normalizada);
+        return registro == null ? 0.0 : Math.max(0.0, registro.getValorDevido() - registro.getValorPago());
+    }
+
+    public double quitarDebitoAvulso(String placa, double valorPago) {
+        String normalizada = placaObrigatoria(placa);
+        if (valorPago <= 0) {
+            throw new IllegalArgumentException("Informe um valor de pagamento valido.");
+        }
+        RegistroEstacionamento registro = ultimoRegistroAvulsoComDebito(normalizada);
+        if (registro == null) {
+            throw new IllegalArgumentException("Nao ha debito avulso pendente para esta placa.");
+        }
+        double restante = registro.registrarPagamentoAdicional(valorPago);
+        if (restante <= 0.0) {
+            placasBloqueadas.remove(normalizada);
+        }
+        return restante;
     }
 
     private Cliente clienteDaModalidade(RegistroEstacionamento registro) {
@@ -231,6 +249,18 @@ public class Estacionamento {
             }
         }
         return false;
+    }
+
+    private RegistroEstacionamento ultimoRegistroAvulsoComDebito(String placa) {
+        for (int i = historico.size() - 1; i >= 0; i--) {
+            RegistroEstacionamento registro = historico.get(i);
+            if (registro.getPlaca().equals(placa)
+                    && registro.getTipoCliente() == TipoCliente.AVULSO
+                    && registro.getValorPago() < registro.getValorDevido()) {
+                return registro;
+            }
+        }
+        return null;
     }
 
     public double relatorioArrecadacao(LocalDateTime inicio, LocalDateTime fim,
@@ -402,5 +432,9 @@ public class Estacionamento {
 
     public Set<String> getPlacasBloqueadas() {
         return Collections.unmodifiableSet(placasBloqueadas);
+    }
+
+    public Map<String, RegistroEstacionamento> getRegistrosAtivos() {
+        return Collections.unmodifiableMap(registrosAtivos);
     }
 }
