@@ -1,4 +1,3 @@
-// Não estende Cliente (não tem CPF/CNPJ) - identificado só pela placa
 class ClienteAvulso {
     private String placa;
     private boolean usouUltimosTresDias;
