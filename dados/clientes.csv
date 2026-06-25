@@ -1,7 +1,8 @@
 tipo,identificador,nome,saldo,debito,inadimplente
 "ESTUDANTE","07505640160","Dimitri","85.0","",""
 "ESTUDANTE","73793131009","Test1","-45.0","",""
-"ESTUDANTE","677667","6667","0.0","",""
-"PROFESSOR","12345678910","Teste","","",""
+"ESTUDANTE","39053344705","Aluno Teste","0.0","",""
+"PROFESSOR","52998224725","Teste","","",""
 "EMPRESA","76688770000130","PUCRS","","50.0","false"
-"PROFESSOR","64745676576467474744","test2","","",""
+"PROFESSOR","11144477735","test2","","",""
+"ESTUDANTE","05786956008","Pedro","0.0","",""

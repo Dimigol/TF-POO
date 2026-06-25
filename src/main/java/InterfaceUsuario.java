@@ -228,7 +228,6 @@ public class InterfaceUsuario extends VerticalLayout {
         DateTimePicker momentoAvulso = new DateTimePicker("Data e hora");
         momentoAvulso.setValue(LocalDateTime.now());
         NumberField pagamentoAvulso = new NumberField("Pagamento avulso");
-        pagamentoAvulso.setHelperText("Deixe em branco para sair sem pagar e gerar bloqueio.");
         NumberField pagamentoDebitoAvulso = new NumberField("Pagamento de debito");
 
         Button entradaCadastrado = new Button("Registrar entrada", event -> executar(() -> {
@@ -399,7 +398,6 @@ public class InterfaceUsuario extends VerticalLayout {
         relatorio.setItems("Arrecadacao", "Situacao do cliente", "Registros do cliente",
                 "Registros avulsos", "Impedidos", "Top 10 do ano");
         TextField referencia = new TextField("CPF, CNPJ ou placa");
-        referencia.setHelperText("Para listar todos os avulsos, deixe a placa em branco.");
         int anoAtual = LocalDateTime.now().getYear();
         DateTimePicker inicioPeriodo = new DateTimePicker("Inicio do periodo");
         inicioPeriodo.setValue(LocalDateTime.of(anoAtual, 1, 1, 0, 0));
