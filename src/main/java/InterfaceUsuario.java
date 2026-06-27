@@ -484,23 +484,6 @@ public class InterfaceUsuario extends VerticalLayout {
                 .collect(Collectors.joining("\n"));
     }
 
-    private String formatarTop10(Map<String, Long> ranking) {
-        if (ranking.isEmpty()) {
-            return "Nenhum registro encontrado.";
-        }
-        StringBuilder sb = new StringBuilder();
-        int posicao = 1;
-        for (Map.Entry<String, Long> entrada : ranking.entrySet()) {
-            sb.append(posicao++)
-                    .append(". ")
-                    .append(Cliente.formatarIdentificador(entrada.getKey()))
-                    .append(" - ")
-                    .append(entrada.getValue())
-                    .append('\n');
-        }
-        return sb.toString().trim();
-    }
-
     private List<RankingLinha> criarRankingTop10(Map<String, Long> ranking) {
         if (ranking.isEmpty()) {
             return List.of();
