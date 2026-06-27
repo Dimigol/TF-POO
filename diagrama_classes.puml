@@ -1,146 +1,141 @@
 @startuml DiagramaClassesEstacionamento
-
 skinparam classAttributeIconSize 0
 hide circle
 
 abstract class Cliente {
-  - id : String
+  - identificador : String
   - nome : String
   - placas : Set<String>
-  + {abstract} calcularCusto(r: RegistroEstacionamento) : double
-  + {abstract} podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-  + adicionarPlaca(placa: String) : boolean
-  + removerPlaca(placa: String) : boolean
+  - limitePlacas : int
+  + adicionarPlaca(placa : String) : boolean
+  + removerPlaca(placa : String) : boolean
+  + podeEntrar(placa : String, estacionadas : Set<String>) : boolean
+  + {abstract} getTipo() : TipoCliente
+  + {abstract} calcularCusto(registro, tarifas) : double
 }
 
-class ClienteAvulso {
-  - placa : String
-  - usouUltimosTresDias : boolean
-  + calcularCusto(r: RegistroEstacionamento) : double
-  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-}
-
+class ClienteAvulso
 class Professor {
-  - cpf : String
-  + calcularCusto(r: RegistroEstacionamento) : double
-  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-  + temVeiculoEstacionado(placasEstacionadas: Set<String>) : boolean
+  + temVeiculoEstacionado(estacionadas : Set<String>) : boolean
 }
-
 class Estudante {
-  - cpf : String
   - saldo : double
-  + calcularCusto(r: RegistroEstacionamento) : double
-  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-  + debitar(valor: double) : void
+  + adicionarCredito(valor : double)
+  + debitar(valor : double)
   + estaBloqueado() : boolean
 }
-
 class Empresa {
-  - cnpj : String
   - debitoAcumulado : double
   - inadimplente : boolean
-  + calcularCusto(r: RegistroEstacionamento) : double
-  + podeEntrar(placa: String, placasEstacionadas: Set<String>) : boolean
-  + adicionarDebito(valor: double) : void
+  + adicionarDebito(valor : double)
   + emitirBoleto() : double
-  + registrarPagamento(valor: double) : void
+  + marcarBoletoVencido()
+  + registrarPagamento(valor : double)
+}
+
+Cliente <|-- ClienteAvulso
+Cliente <|-- Professor
+Cliente <|-- Estudante
+Cliente <|-- Empresa
+
+enum TipoCliente {
+  PROFESSOR
+  ESTUDANTE
+  EMPRESA
+  AVULSO
 }
 
 class Veiculo {
   - placa : String
   - proprietario : Cliente
-  + getPlaca() : String
-  + getProprietario() : Cliente
 }
 
 class RegistroEstacionamento {
   - placa : String
   - tipoCliente : TipoCliente
+  - identificadorProprietario : String
   - entrada : LocalDateTime
   - saida : LocalDateTime
   - custo : double
   - idDesconto : String
   - valorDesconto : double
+  - valorDevido : double
   - valorPago : double
-  + estaAtivo() : boolean
-  + calcularDuracao() : Duration
+  + prepararSaida(saida : LocalDateTime)
+  + registrarCobranca(custo, id, desconto, pago)
+  + getHorasCobraveis() : long
+  + getQuantidadeViradasDeDia() : long
+}
+
+class PagamentoEmpresa {
+  - identificadorEmpresa : String
+  - momento : LocalDateTime
+  - valor : double
 }
 
 interface Desconto {
+  + aplicar(valorOriginal : double) : double
   + getId() : String
-  + aplicar(valorOriginal: double) : double
 }
-
-class DescontoClienteFrequente {
-  + getId() : String
-  + aplicar(valorOriginal: double) : double
-}
+class DescontoClienteFrequente
+Desconto <|.. DescontoClienteFrequente
 
 class TabelaTarifas {
   - valorHora : double
   - valorDiaria : double
   - valorIngresso : double
   - multaAtraso : double
-  + carregarDeArquivo(caminho: String) : void
 }
 
 class Estacionamento {
-  - capacidadeTotal : int
   - clientesCadastrados : Map<String, Cliente>
   - veiculosCadastrados : Map<String, Veiculo>
   - placasBloqueadas : Set<String>
   - registrosAtivos : Map<String, RegistroEstacionamento>
   - historico : List<RegistroEstacionamento>
-  - tarifas : TabelaTarifas
-  - descontos : List<Desconto>
-  + autorizarEntrada(placa: String, momento: LocalDateTime) : boolean
-  + processarSaida(placa: String, momento: LocalDateTime) : double
-  + cadastrarCliente(c: Cliente) : void
-  + cadastrarPlaca(idCliente: String, placa: String) : boolean
-  + removerPlaca(idCliente: String, placa: String) : boolean
-  + relatorioArrecadacao(inicio: LocalDate, fim: LocalDate) : double
-  + relatorioSituacaoCliente(idCliente: String) : String
-  + relatorioRegistrosCliente(idCliente: String, inicio: LocalDate, fim: LocalDate) : List<RegistroEstacionamento>
-  + relatorioBloqueados() : Set<String>
-  + relatorioTop10Frequentes() : List<Cliente>
+  - pagamentosEmpresariais : List<PagamentoEmpresa>
+  + cadastrarCliente(cliente : Cliente)
+  + cadastrarPlaca(id, placa) : boolean
+  + removerPlaca(id, placa) : boolean
+  + adicionarCreditoEstudante(id, valor) : double
+  + emitirBoletoEmpresa(id) : double
+  + marcarBoletoEmpresaComoVencido(id)
+  + registrarPagamentoEmpresa(id, valor, momento) : double
+  + autorizarEntrada(placa, momento) : boolean
+  + calcularValorSaida(placa, momento) : double
+  + processarSaida(placa, momento, pagamento) : double
+  + relatorioArrecadacao(inicio, fim, categorias) : double
+  + relatorioSituacaoCliente(id) : String
+  + relatorioRegistrosCliente(id, inicio, fim) : List
+  + relatorioRegistrosAvulso(placa, inicio, fim) : List
+  + relatorioImpedidos() : Set
+  + relatorioTop10Frequentes(ano) : Map
 }
 
 class CSVManager {
-  + carregarClientes(caminho: String) : Map<String, Cliente>
-  + carregarVeiculos(caminho: String) : Map<String, Veiculo>
-  + carregarRegistros(caminho: String) : List<RegistroEstacionamento>
-  + carregarBloqueados(caminho: String) : Set<String>
-  + salvarClientes(caminho: String, clientes: Map<String, Cliente>) : void
-  + salvarRegistros(caminho: String, registros: List<RegistroEstacionamento>) : void
-  + salvarBloqueados(caminho: String, bloqueados: Set<String>) : void
+  - diretorio : Path
+  + carregarTudo(tarifas) : Estacionamento
+  + salvarTudo(estacionamento)
+  + instalarSalvamentoAutomatico(estacionamento) : Thread
 }
 
-class InterfaceUsuario {
-  - estacionamento : Estacionamento
-  + telaCadastroCliente() : void
-  + telaEntradaSaida() : void
-  + telaRelatorios() : void
-}
+class InterfaceUsuario <<Vaadin Route>>
+class Main <<Spring Boot>>
+class Aplicacao <<Compatibilidade>>
 
-' Heranças
-Cliente <|-- Professor
-Cliente <|-- Estudante
-Cliente <|-- Empresa
-
-' Implementações
-Desconto <|.. DescontoClienteFrequente
-
-' Associações
-Cliente "1" o-- "0..*" Veiculo : possui >
-ClienteAvulso "1" o-- "0..*" RegistroEstacionamento : possui >
-Estacionamento "1" *-- "0..*" RegistroEstacionamento : historico
-Estacionamento "1" *-- "0..*" Veiculo : veiculosCadastrados
-Estacionamento "1" *-- "0..*" Cliente : clientesCadastrados
-Estacionamento "1" -- "1" TabelaTarifas : usa >
-Estacionamento "1" -- "0..*" Desconto : aplica >
-Estacionamento "1" -- "1" CSVManager : usa >
-InterfaceUsuario "1" --> "1" Estacionamento : usa >
-RegistroEstacionamento "0..*" --> "1" Veiculo : referencia >
-
+Cliente "1" o-- "0..*" Veiculo
+Estacionamento *-- Cliente
+Estacionamento *-- Veiculo
+Estacionamento *-- RegistroEstacionamento
+Estacionamento *-- PagamentoEmpresa
+Estacionamento --> TabelaTarifas
+Estacionamento --> Desconto
+RegistroEstacionamento --> TipoCliente
+CSVManager --> Estacionamento
+InterfaceUsuario --> Estacionamento
+InterfaceUsuario --> CSVManager
+Main --> CSVManager
+Main --> Estacionamento
+Main --> InterfaceUsuario
+Aplicacao --> Main
 @enduml
